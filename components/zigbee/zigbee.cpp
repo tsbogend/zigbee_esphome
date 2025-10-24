@@ -9,6 +9,7 @@
 #ifdef CONFIG_WIFI_COEX
 #include "esp_coexist.h"
 #endif
+#include "esp_pm.h"
 
 #if !(defined ZB_ED_ROLE || defined ZB_ROUTER_ROLE)
 #error Define ZB_ED_ROLE or ZB_ROUTER_ROLE in idf.py menuconfig.
@@ -389,6 +390,14 @@ void ZigBeeComponent::setup() {
       .radio_config = ESP_ZB_DEFAULT_RADIO_CONFIG(),
       .host_config = ESP_ZB_DEFAULT_HOST_CONFIG(),
   };
+  esp_pm_config_t pm_config = {
+	.max_freq_mhz = 80,
+	.min_freq_mhz = 10,
+	.light_sleep_enable = true,
+  };
+
+  esp_pm_configure(&pm_config);
+
 #ifdef CONFIG_WIFI_COEX
   if (esp_coex_wifi_i154_enable() != ESP_OK) {
     this->mark_failed();
